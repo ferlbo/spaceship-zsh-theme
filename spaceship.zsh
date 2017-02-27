@@ -88,6 +88,14 @@ SPACESHIP_VI_MODE_NORMAL="${SPACESHIP_VI_MODE_NORMAL:-[N]}"
 spaceship_wifi() {
   [[ $SPACESHIP_WIFI_SHOW == false ]] && return
 
+  # Check for nmcli
+  if ! [ -x "$(command -v nmcli)" ]; then
+    echo -n "%{$fg_bold[red]%}"
+    echo -n "Not present"
+    echo -n "%{$reset_color%}"
+    return
+  fi
+
   # Check if wifi is enabled
   if [[ $(nmcli r wifi | grep enabled | grep -v not | wc -l) == 0 ]]; then
     echo -n "%{$fg_bold[red]%}"

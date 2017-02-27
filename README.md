@@ -154,6 +154,14 @@ Now you have ability to disable elements of Spaceship. All options must be overr
 | `SPACESHIP_GIT_UNPULLED` | `⇣` | Character to be shown on unpulled changes |
 | `SPACESHIP_GIT_UNPUSHED` | `⇡` | Character to be shown on unpushed changes |
 
+### Wifi
+
+Disabled as default. Set `SPACESHIP_WIFI_SHOW` to `true` in your `.zshrc`, if you need to show wifi status.
+
+| Variable | Default | Meaning |
+| :------- | :-----: | ------- |
+| `SPACESHIP_WIFI_SHOW` | `false` | Show time (set to `true` for enabling) |
+
 ### Time
 
 Disabled as default. Set `SPACESHIP_TIME_SHOW` to `true` in your `.zshrc`, if you need to show time stamps.

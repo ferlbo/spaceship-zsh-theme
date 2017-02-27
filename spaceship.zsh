@@ -37,6 +37,9 @@ SPACESHIP_GIT_STASHED="${SPACESHIP_GIT_STASHED:-$}"
 SPACESHIP_GIT_UNPULLED="${SPACESHIP_GIT_UNPULLED:-⇣}"
 SPACESHIP_GIT_UNPUSHED="${SPACESHIP_GIT_UNPUSHED:-⇡}"
 
+# WIFI
+SPACESHIP_WIFI_SHOW="${SPACESHIP_WIFI_SHOW:-false}"
+
 # TIME
 SPACESHIP_TIME_SHOW="${SPACESHIP_TIME_SHOW:-false}"
 SPACESHIP_TIME_12HR="${SPACESHIP_TIME_12HR:-false}"
@@ -74,6 +77,37 @@ SPACESHIP_PYENV_SYMBOL="${SPACESHIP_PYENV_SYMBOL:-🐍}"
 SPACESHIP_VI_MODE_SHOW="${SPACESHIP_VI_MODE_SHOW:-true}"
 SPACESHIP_VI_MODE_INSERT="${SPACESHIP_VI_MODE_INSERT:-[I]}"
 SPACESHIP_VI_MODE_NORMAL="${SPACESHIP_VI_MODE_NORMAL:-[N]}"
+
+# Wifi
+spaceship_wifi() {
+  [[ $SPACESHIP_WIFI_SHOW == false ]] && return
+
+  # Check if wifi is enabled
+  if [[ $(nmcli r wifi | grep enabled | grep -v not | wc -l) == 0 ]]; then
+    echo -n "%{$fg_bold[red]%}"
+    echo -n "Disabled"
+    echo -n "%{$reset_color%}"
+    return
+  fi
+
+  # Check if wifi is connected
+  if [[ $(cat /proc/net/wireless | wc -l) -le 2 ]]; then
+    echo -n "%{$fg_bold[yellow]%}"
+    echo -n "Disconnected"
+    echo -n "%{$reset_color%}"
+    return
+  fi
+
+  echo -n "%{$fg_bold[green]%}"
+  echo -n "$(iwgetid -r) "
+
+  local wifi_signal=$(cat /proc/net/wireless | tail -1 | awk '{print $4}' | sed "s|\.||g")
+  local wifi_percent=$(expr 2 \* $(expr $wifi_signal + 100))
+  echo -n "%{$fg_bold[blue]%}"
+  echo -n "$wifi_percent%%"
+
+  echo -n "%{$reset_color%}"
+}
 
 # Time
 spaceship_time() {
@@ -462,6 +496,11 @@ spaceship_prompt() {
   spaceship_return_status
 }
 
+# RPROMPT
+spaceship_rprompt() {
+  spaceship_wifi
+}
+
 # PS2 - continuation interactive prompt
 spaceship_ps2_prompt() {
   echo -n "%{$fg_bold[yellow]%}"
@@ -474,6 +513,7 @@ VIRTUAL_ENV_DISABLE_PROMPT=true
 
 # Expose Spaceship to environment variables
 PROMPT='$(spaceship_prompt)'
+RPROMPT='$(spaceship_rprompt)'
 PS2='$(spaceship_ps2_prompt)'
 
 # LSCOLORS
